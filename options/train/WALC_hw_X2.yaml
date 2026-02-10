@@ -1,0 +1,180 @@
+# general settings
+name: WALC_IR_X2
+model_type: ESRModel
+scale: 2
+num_gpu: 4
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: M3FD_Fusion
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/trainsets/IR700_train
+    dataroot_lq: /home/vision/hongwaiir/datasets/trainsets/x2
+    filename_tmpl: '{}_x2' 
+    io_backend:
+      type: disk
+
+    gt_size: 128
+    use_hflip: true
+    use_rot: true
+
+    # data loader
+    use_shuffle: true
+    num_worker_per_gpu: 4
+    batch_size_per_gpu: 16
+    dataset_enlarge_ratio: 1
+    prefetch_mode: cuda
+    pin_memory: true
+
+
+  val_1:
+    name: ir7005
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir7005
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir7005d/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+
+  val_2:
+    name: ir70015
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir70015
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir70015d/x2
+    filename_tmpl: '{}_x2'    
+    io_backend:
+      type: disk
+
+  val_3:
+    name: ir70020
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir70020
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir70020d/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  val_4:
+    name: Flir
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/Flir
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/fld/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+
+  val_5:
+    name: IR100
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/IR100
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir100d/x2
+    filename_tmpl: '{}_x2'    
+    io_backend:
+      type: disk
+
+  val_6:
+    name: RS
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/RoadScene/infrared
+    dataroot_lq: /home/vision/hongwaiir/datasets/RoadScene/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  
+  val_7:
+    name: reA
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/results-A
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/rad/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  val_8:
+    name: reC
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/results-C/HR
+    dataroot_lq: /home/vision/hongwaiir/datasets/results-C/LR_bicubic/X2
+    filename_tmpl: '{}x2'     
+    io_backend:
+      type: disk  
+
+
+# network structures
+network_g:
+  type: WALC
+  dim: 64
+  pdim: 32
+  kernel_size: 13
+  n_blocks: 5
+  conv_blocks: 5
+  window_size: 32
+  num_heads: 4
+  upscaling_factor: 2
+  exp_ratio: 1.25
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: AdamW
+    lr: !!float 5e-4
+    weight_decay: 0
+    betas: [0.9, 0.9]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [250000, 400000, 450000, 475000, 490000]
+    gamma: 0.5
+
+  total_iter: 500000
+  warmup_iter: 20000
+
+  # losses
+#  wave_opt:
+#    type: ComplexWaveletLoss
+#    loss_weight: 0.5  # 作为辅助损失
+#    J: 3
+#    magnitude_weight: 1.0
+#    phase_weight: 0.05  # 红外图像建议更小的相位权重
+#    lowfreq_weight: 0.1
+#    criterion: charbonnier
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+# validation settings
+val:
+  val_freq: !!float 1e3
+  save_img: False
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 2
+      test_y_channel: True
+    
+    ssim: # metric name, can be arbitrary
+      type: calculate_ssim
+      crop_border: 2
+      test_y_channel: True
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 1e3
+  use_tb_logger: True
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29529

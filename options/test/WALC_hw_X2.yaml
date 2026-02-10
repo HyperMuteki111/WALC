@@ -1,0 +1,111 @@
+name: WALC_DFLIP_X2
+model_type: ESRModel
+scale: 2
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+datasets:
+  test_1:
+    name: ir7005
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir7005
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir7005d/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+
+  test_2:
+    name: ir70015
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir70015
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir70015d/x2
+    filename_tmpl: '{}_x2'    
+    io_backend:
+      type: disk
+
+  test_3:
+    name: ir70020
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/ir70020
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir70020d/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  
+  test_4:
+    name: Flir
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/Flir
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/fld/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+
+  test_5:
+    name: IR100
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/IR100
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/ir100d/x2
+    filename_tmpl: '{}_x2'    
+    io_backend:
+      type: disk
+
+  test_6:
+    name: RS
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/RoadScene/infrared
+    dataroot_lq: /home/vision/hongwaiir/datasets/RoadScene/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  
+  test_7:
+    name: reA
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/results-A
+    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/rad/x2
+    filename_tmpl: '{}_x2'     
+    io_backend:
+      type: disk
+  test_8:
+    name: reC
+    type: PairedImageDataset
+    dataroot_gt: /home/vision/hongwaiir/datasets/results-C/HR
+    dataroot_lq: /home/vision/hongwaiir/datasets/results-C/LR_bicubic/X2
+    filename_tmpl: '{}x2'     
+    io_backend:
+      type: disk  
+
+# network structures
+network_g:
+  type: WALC
+  dim: 64
+  pdim: 32
+  kernel_size: 13
+  n_blocks: 5
+  conv_blocks: 5
+  window_size: 32
+  num_heads: 4
+  upscaling_factor: 2
+  exp_ratio: 1.25
+  attn_type: Flex
+# path/
+path:
+  pretrain_network_g: /home/vision/hongwaiir/WALC/experiments/WALC_IR_X2_archived_20251117_180956/models/net_g_91000.pth
+  param_key_g: 'params_ema'
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 2
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 2
+      test_y_channel: true
