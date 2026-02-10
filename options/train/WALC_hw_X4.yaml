@@ -8,7 +8,7 @@ manual_seed: 0
 # dataset and data loader settings
 datasets:
   train:
-    name: M3FD_Fusion
+    name: IR700
     type: PairedImageDataset
     dataroot_gt: /home/vision/hongwaiir/datasets/trainsets/IR700_train
     dataroot_lq: /home/vision/hongwaiir/datasets/trainsets/x4
@@ -73,24 +73,8 @@ datasets:
     io_backend:
       type: disk
 
+
   val_6:
-    name: RS
-    type: PairedImageDataset
-    dataroot_gt: /home/vision/hongwaiir/datasets/RoadScene/infrared
-    dataroot_lq: /home/vision/hongwaiir/datasets/RoadScene/x4
-    filename_tmpl: '{}_x4'     
-    io_backend:
-      type: disk
-  
-  val_7:
-    name: reA
-    type: PairedImageDataset
-    dataroot_gt: /home/vision/hongwaiir/datasets/testsets/results-A
-    dataroot_lq: /home/vision/hongwaiir/datasets/testsets/rad/x4
-    filename_tmpl: '{}_x4'     
-    io_backend:
-      type: disk
-  val_8:
     name: reC
     type: PairedImageDataset
     dataroot_gt: /home/vision/hongwaiir/datasets/results-C/HR

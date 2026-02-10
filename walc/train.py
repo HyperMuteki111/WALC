@@ -1,6 +1,7 @@
 # flake8: noqa
 import os.path as osp
-
+import sys
+sys.path.append(osp.dirname(osp.dirname(osp.abspath(__file__))))
 import walc.archs
 import walc.models
 import walc.data

@@ -7,7 +7,7 @@ WALC-IRSR is a lightweight infrared image super-resolution model that decouples 
 
 ## Installation
 
-```bash
+```
 cd WALC
 conda create -n walc python=3.10
 conda activate walc
@@ -15,6 +15,10 @@ pip3 install torch torchvision torchaudio
 pip install -r requirements.txt
 python setup.py develop
 ```
+
+## Dataset
+
+You can download the dataset and pretrained models from (https://pan.baidu.com/s/1NJxUoCFXEHbVdoh0TUtiyQ?pwd=3maa) (Password: 3maa).
 
 ## Training
 
